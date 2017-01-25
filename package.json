@@ -70,7 +70,7 @@
     "vinyl-source-stream": "^1.1.0",
     "zone.js": "^0.6.21"
   },
-  "version": "1.0.5",
+  "version": "1.0.6",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/badoque/bdq-ion-global-nav-locker.git"
