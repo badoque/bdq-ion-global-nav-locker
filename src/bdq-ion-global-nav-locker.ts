@@ -8,7 +8,6 @@ import { BdqSelect } from './components/select/custom-select';
 @NgModule({
   imports: [CommonModule],
   exports: [
-    GlobalNavLocker,
     BdqSelect,
     BdqDateTime
   ],
@@ -18,8 +17,7 @@ import { BdqSelect } from './components/select/custom-select';
   ],
   declarations: [
     BdqSelect,
-    BdqDateTime,
-    GlobalNavLocker
+    BdqDateTime
   ],
   providers: [ 
     BackManagerProvider,
