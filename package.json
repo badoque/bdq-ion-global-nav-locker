@@ -1,6 +1,6 @@
 {
   "name": "bdq-ion-global-nav-locker",
-  "description": "Set of components to print Django Rest Frameworks errors in a pretty template",
+  "description": "Great for managing ionic2 concurrent navigation issues like back buttons behavior, repeated component presentation etc",
   "author": "Badoque",
   "homepage": "http://badoque.com/",
   "private": false,
