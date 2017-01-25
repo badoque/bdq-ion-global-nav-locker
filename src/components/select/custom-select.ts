@@ -4,6 +4,8 @@ import { AfterContentInit, Component, ContentChildren, ElementRef,
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { App, NavController, Form, Config, Item, Ion } from 'ionic-angular';
+import { deepCopy, isBlank, isPresent, 
+  isTrueProperty, isCheckedProperty } from 'ionic-angular/util/util';
 import { GlobalNavLocker } from '../../providers/global-nav-locker';
 import { Option } from 'ionic-angular/components/option/option';
 
@@ -13,47 +15,6 @@ export const SELECT_VALUE_ACCESSOR: any = {
   useExisting: forwardRef(() => BdqSelect),
   multi: true
 };
-
-/** @private */
-export function isBlank(val: any) { return val === undefined || val === null; }
-
-/** @private */
-export function isPresent(val: any) { return val !== undefined && val !== null; }
-
-
-/** @private */
-export function isTrueProperty(val: any): boolean {
-  if (typeof val === 'string') {
-    val = val.toLowerCase().trim();
-    return (val === 'true' || val === 'on' || val === '');
-  }
-  return !!val;
-};
-
-/** @private */
-export function isCheckedProperty(a: any, b: any): boolean {
-  if (a === undefined || a === null || a === '') {
-    return (b === undefined || b === null || b === '');
-
-  } else if (a === true || a === 'true') {
-    return (b === true || b === 'true');
-
-  } else if (a === false || a === 'false') {
-    return (b === false || b === 'false');
-
-  } else if (a === 0 || a === '0') {
-    return (b === 0 || b === '0');
-  }
-
-  // not using strict comparison on purpose
-  return (a == b); // tslint:disable-line
-};
-
-
-/** @private */
-export function deepCopy(obj: any) {
-  return JSON.parse(JSON.stringify(obj));
-}
 
 
 /**

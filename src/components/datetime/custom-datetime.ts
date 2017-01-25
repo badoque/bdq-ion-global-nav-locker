@@ -3,7 +3,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { PickerColumn, PickerColumnOption } from 'ionic-angular/components/picker/picker-options';
 import { Form, Config, Item, Ion, Picker, PickerController } from 'ionic-angular';
-import { deepCopy, isBlank, isPresent, isTrueProperty, isArray, isString } from 'ionic-angular/util/util';
+import { deepCopy, isBlank, isPresent, 
+  isTrueProperty, isArray, isString } from 'ionic-angular/util/util';
 import { 
   dateValueRange, renderDateTime, renderTextFormat, 
   convertFormatToKey, getValueFromFormat, parseTemplate, 

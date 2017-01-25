@@ -73,7 +73,6 @@ gulp.task("rollup", function() {
 			commonjs({
 				include: 'node_modules/**',
 				namedExports: {
-					'node_modules/rxjs/Subject.js': [ 'Subject' ],
 					//'node_modules/rxjs/Observable.js': [ 'Observable' ],
 					'node_modules/rxjs/operators/toPromise.js': [ 'toPromise' ]
 				}
