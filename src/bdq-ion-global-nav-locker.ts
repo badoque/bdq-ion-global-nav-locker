@@ -18,7 +18,8 @@ import { BdqSelect } from './components/select/custom-select';
   ],
   declarations: [
     BdqSelect,
-    BdqDateTime
+    BdqDateTime,
+    GlobalNavLocker
   ],
   providers: [ 
     BackManagerProvider,
