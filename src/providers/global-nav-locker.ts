@@ -141,7 +141,15 @@ export class GlobalNavLocker {
           backObserver.complete();
         });
       });
-      let promise = self.nav.push(page, params, opts, done);
+
+      let customDone = function(){
+        self.unlock();
+        if(done !== undefined){
+          return done(arguments);
+        }
+      }
+
+      let promise = self.nav.push(page, params, opts, customDone);
 
       if(promise !== undefined){
         promise
@@ -169,7 +177,15 @@ export class GlobalNavLocker {
     let self = this;
     return self.tryLockAndDoSomething((observer)=>{
       this.backManager.setRootCallback();
-      let promise = this.nav.setRoot(page, params, opts, done);
+
+      let customDone = function(){
+        self.unlock();
+        if(done !== undefined){
+          return done(arguments);
+        }
+      }
+
+      let promise = this.nav.setRoot(page, params, opts, customDone);
       if(promise !== undefined){
         promise
           .then(()=>{
@@ -229,10 +245,12 @@ export class GlobalNavLocker {
       
       modal.present()
         .then(()=>{
+          self.unlock();
           observer.next(modal);
           observer.complete();
         })
         .catch(()=>{
+          self.unlock();
           observer.error(modal);
           observer.complete();
         });
