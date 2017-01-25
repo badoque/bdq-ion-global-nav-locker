@@ -14,6 +14,8 @@ var merge = require('merge2');
 var rollup = require('rollup-stream');
 var tsRollup = require('rollup-plugin-typescript');
 var angularRollup = require("rollup-plugin-angular");
+var alias = require('rollup-plugin-alias');
+var commonjs = require('rollup-plugin-commonjs');
 var nodeResolve = require("rollup-plugin-node-resolve");
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
@@ -60,6 +62,7 @@ gulp.task("rollup", function() {
 	return rollup({
 		entry: "./src/main.ts",
 		external: [
+			"@angular/common",
 			"@angular/core",
 			"ionic-angular",
 			"rxjs"
@@ -67,6 +70,14 @@ gulp.task("rollup", function() {
 		format: "cjs",
 		sourceMap: true,
 		plugins: [
+			commonjs({
+				include: 'node_modules/**',
+				namedExports: {
+					'node_modules/rxjs/Subject.js': [ 'Subject' ],
+					//'node_modules/rxjs/Observable.js': [ 'Observable' ],
+					'node_modules/rxjs/operators/toPromise.js': [ 'toPromise' ]
+				}
+			}),
 			tsRollup({
 				tsconfig: false,
 				target: "es5",
@@ -77,7 +88,8 @@ gulp.task("rollup", function() {
 				noImplicitAny: false,
 			}),
 			angularRollup(),
-			nodeResolve({ jsnext: true, main: true })
+			//rollupRx(),
+			nodeResolve({ jsnext: true, main: true, browser: true })
 		]
 	})
 	.pipe(source("main.ts", "./src/"))
@@ -93,6 +105,7 @@ gulp.task("rollup-aot", ["rollup-ngc"], function() {
 	return rollup({
 		entry: "./temp/main.js",
 		external: [
+			"@angular/common",
 			"@angular/core",
 			"ionic-angular",
 			"rxjs"

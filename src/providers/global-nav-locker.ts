@@ -8,11 +8,7 @@ import { NavController, App, ModalController,
   LoadingController, LoadingOptions } from 'ionic-angular';
 import { BackManagerProvider } from './back-manager';
 import { Observable } from "rxjs/Observable";
-import * as Rx from 'rxjs/Rx';
-
-// import { TeamSelectPage } from '../pages/team-select/team-select';
-// import { CompleteSignupPage } from '../pages/complete-signup/complete-signup';
-// import { AuthMethodChoicePage } from '../pages/auth-method-choice/auth-method-choice';
+import "rxjs/add/operator/toPromise";
 
 export class QueuedItem {
 
@@ -93,7 +89,7 @@ export class GlobalNavLocker {
 
   private tryLockAndDoSomething(callback){
     let self = this;
-    let observable:Rx.Observable<any> = Rx.Observable.create((observer)=>{
+    let observable:Observable<any> = Observable.create((observer)=>{
       if(self.tryLock()){
         callback(observer);
       } else {
@@ -118,7 +114,7 @@ export class GlobalNavLocker {
   }
 
   private enqueueSomething(item: QueuedItem){
-    return Rx.Observable.create((observer)=>{
+    return Observable.create((observer)=>{
       if(this.pageLock){
         item.setObserver(observer);
         this.queue.push(item);
@@ -138,7 +134,7 @@ export class GlobalNavLocker {
     let self = this;
     return self.tryLockAndDoSomething((observer)=>{
       self.backManager.pushCallback(()=>{
-        return Rx.Observable.create((backObserver)=>{
+        return Observable.create((backObserver)=>{
           self.backManager.popCallback();
           self.nav.pop();
           backObserver.next();
@@ -203,7 +199,7 @@ export class GlobalNavLocker {
       let modal = this.modalCtrl.create(component, data, opts);
       let originalModalDismiss = modal.dismiss;
       self.backManager.pushCallback((args?:any)=>{
-        return Rx.Observable.create((backObserver)=>{
+        return Observable.create((backObserver)=>{
           let data, role, navOptions;
           if(args !== undefined){
             data = args.data;
@@ -255,7 +251,7 @@ export class GlobalNavLocker {
       let popover = this.popoverCtrl.create(component, data, opts);
       let originalPopoverDismiss = popover.dismiss;
       self.backManager.pushCallback((args?:any)=>{
-        return Rx.Observable.create((backObserver)=>{
+        return Observable.create((backObserver)=>{
           let data, role, navOptions;
           if(args !== undefined){
             data = args.data;
@@ -307,7 +303,7 @@ export class GlobalNavLocker {
       let loading = this.loadingCtrl.create(opts);
       let originalLoadingDismiss = loading.dismiss;
       self.backManager.pushCallback((args?:any)=>{
-        return Rx.Observable.create((observer)=>{
+        return Observable.create((observer)=>{
           observer.next();
           observer.complete();
         });
@@ -342,7 +338,7 @@ export class GlobalNavLocker {
       let alert = this.alertCtrl.create(opts);
       let originalAlertDismiss = alert.dismiss;
       self.backManager.pushCallback((args?:any)=>{
-        return Rx.Observable.create((backObserver)=>{
+        return Observable.create((backObserver)=>{
           let data, role, navOptions;
           if(args !== undefined){
             data = args.data;
@@ -393,7 +389,7 @@ export class GlobalNavLocker {
       let picker = this.pickerCtrl.create(opts);
       let originalPickerDismiss = picker.dismiss;
       self.backManager.pushCallback((args?:any)=>{
-        return Rx.Observable.create((backObserver)=>{
+        return Observable.create((backObserver)=>{
           let data, role, navOptions;
           if(args !== undefined){
             data = args.data;
@@ -444,7 +440,7 @@ export class GlobalNavLocker {
       let actionSheet = this.actionSheetCtrl.create(opts);
       let originalActionSheetDismiss = actionSheet.dismiss;
       self.backManager.pushCallback((args?:any)=>{
-        return Rx.Observable.create((backObserver)=>{
+        return Observable.create((backObserver)=>{
           let data, role, navOptions;
           if(args !== undefined){
             data = args.data;
@@ -487,7 +483,7 @@ export class GlobalNavLocker {
 
   public tryBack(args?:any){
     let self = this;
-    let observable = Rx.Observable.create((observer)=>{
+    let observable = Observable.create((observer)=>{
       if(self.tryLock()){
         self.backManager.back(args).subscribe(
           ()=>{

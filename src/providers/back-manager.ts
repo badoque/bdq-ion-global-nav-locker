@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Platform } from 'ionic-angular';
 import { Observable } from "rxjs/Observable";
-import * as Rx from 'rxjs/Rx';
+import "rxjs/add/operator/toPromise";
 
 @Injectable()
 export class BackManagerProvider {
     
-    private backCallbacks: ((args?)=>Rx.Observable<any>)[] = [];
+    private backCallbacks: ((args?)=>Observable<any>)[] = [];
 
     constructor(
       public platform:Platform
     ){
       this.backCallbacks.push(()=>{
         let self = this;
-        return Rx.Observable.create((observer)=>{
+        return Observable.create((observer)=>{
           self.platform.exitApp();
           observer.next();
           observer.complete();
@@ -23,22 +23,22 @@ export class BackManagerProvider {
 
     public setRootCallback(){
       var self = this;
-      return Rx.Observable.create((observer)=>{
+      return Observable.create((observer)=>{
         self.platform.exitApp();
         observer.next();
         observer.complete();
       });
     }
 
-    public popCallback(){
+    public popCallback(): ()=>Observable<any> {
       return this.backCallbacks.pop();
     }
     
-    public pushCallback(callback: ()=>Rx.Observable<any>){
+    public pushCallback(callback: ()=>Observable<any>){
       this.backCallbacks.push(callback);
     }
     
-    public back(args?){
+    public back(args?): Observable<any> {
       return this.backCallbacks[this.backCallbacks.length - 1](args);
     }
 
