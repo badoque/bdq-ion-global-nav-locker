@@ -1,6 +1,6 @@
 {
   "name": "bdq-ion-global-nav-locker",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Great for managing ionic2 concurrent navigation issues like back buttons behavior, repeated component presentation etc",
   "author": {
     "name": "Badoque",
