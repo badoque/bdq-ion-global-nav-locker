@@ -190,7 +190,9 @@ export class BdqSelect extends Ion implements AfterContentInit, ControlValueAcce
   @Input() selectedText: string = '';
 
   /**
-   * @input {string} The mode to apply to this component. Mode can be `ios`, `wp`, or `md`.
+   * @input {string} The mode determines which platform styles to use.
+   * Possible values are: `"ios"`, `"md"`, or `"wp"`.
+   * For more information, see [Platform Styles](/docs/v2/theming/platform-specific-styles).
    */
   @Input()
   set mode(val: string) {
@@ -198,7 +200,7 @@ export class BdqSelect extends Ion implements AfterContentInit, ControlValueAcce
   }
 
   /**
-   * @output {any} Any expression you want to evaluate when the selection has changed.
+   * @output {any} Emitted when the selection has changed.
    */
   @Output() ionChange: EventEmitter<any> = new EventEmitter();
 
@@ -351,17 +353,17 @@ export class BdqSelect extends Ion implements AfterContentInit, ControlValueAcce
       // create and present the alert instance from our built up selectOptions
       overlayPromise = this._globalNavLocker.tryPresentAlert(selectOptions);
     }
-    overlayPromise.then((overlay)=>{
+    overlayPromise.then((overlay:any)=>{
       this._isOpen = true;
       overlay.onDidDismiss(() => {
         this._isOpen = false;
       });
-    })
+    });
   }
 
 
   /**
-   * @input {boolean} Whether or not the select component can accept multiple values. Default: `false`.
+   * @input {boolean} If true, the element can accept multiple values.
    */
   @Input()
   get multiple(): any {
@@ -422,11 +424,11 @@ export class BdqSelect extends Ion implements AfterContentInit, ControlValueAcce
    * @input {boolean} Whether or not the select component is disabled. Default `false`.
    */
   @Input()
-  get disabled() {
+  get disabled(): boolean {
     return this._disabled;
   }
 
-  set disabled(val) {
+  set disabled(val: boolean) {
     this._disabled = isTrueProperty(val);
     this._item && this._item.setElementClass('item-select-disabled', this._disabled);
   }
