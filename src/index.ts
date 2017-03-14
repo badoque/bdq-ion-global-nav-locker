@@ -1,13 +1,13 @@
-import { NgModule }      from '@angular/core';
-import { CommonModule } from '@angular/common'
-import { BackManagerProvider } from './providers/back-manager';
-import { GlobalNavLocker } from './providers/global-nav-locker';
-import { BdqDateTime } from './components/datetime/custom-datetime';
-import { BdqSelect } from './components/select/custom-select';
+import { NgModule }      from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { BackManagerProvider } from "./providers/back-manager";
+import { GlobalNavLocker } from "./providers/global-nav-locker";
+import { BdqDateTime } from "./components/datetime/custom-datetime";
+import { BdqSelect } from "./components/select/custom-select";
 
-export * from './providers/global-nav-locker';
-export * from './components/select/custom-select';
-export * from './components/datetime/custom-datetime';
+export * from "./providers/global-nav-locker";
+export * from "./components/select/custom-select";
+export * from "./components/datetime/custom-datetime";
 
 @NgModule({
   imports: [CommonModule],
@@ -15,7 +15,7 @@ export * from './components/datetime/custom-datetime';
     BdqSelect,
     BdqDateTime
   ],
-  entryComponents:[
+  entryComponents: [
     BdqSelect,
     BdqDateTime
   ],
