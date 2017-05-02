@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
     private statusBar: StatusBar,
     private gnl: GlobalNavLocker,
   ) {
-    tihs.rootPage = HomePage;
+    this.rootPage = HomePage;
     platform.ready().then(() => {
       splashScreen.hide();
       statusBar.styleDefault();
