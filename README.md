@@ -63,6 +63,7 @@ You only need to run `gulp package`.
 
 ## Roadmap
 
+* Multiple navigators: Now only root navigator is supported. You can set the navigator to be the local one with `setNav` method, but it will affect the global service.
 * Tests: This project does not have any unit test yet, so our first goal is to create a document with the test cases and create a test process in the build
 
 
