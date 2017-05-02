@@ -13,8 +13,46 @@ The package is available on NPM so you just need to run:
 
 `npm install --save bdq-ion-global-nav-locker`
 
-You need to inject GlobalNavLocker in you components constructor. Remember not adding it to `providers` property in component decorator options, because this will create a new instance of the GlobalNavLocker, and will not garantee that all the components in the application are sharing the same navigator handler.
+After that you just have to set the nav which you want to use as your global navigator in your app main component, in the ngOnInit method like in the example bellow:
 
+```typescript
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { Nav, Platform } from 'ionic-angular';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
+import { GlobalNavLocker } from 'bdq-ion-global-nav-locker';
+
+import { HomePage } from '../pages/home/home';
+
+@Component({
+  templateUrl: 'app.html'
+})
+export class AppComponent implements OnInit {
+  @ViewChild(Nav) nav: Nav;
+
+  rootPage: any;
+
+  constructor(
+    private platform: Platform,
+    private splashScreen: SplashScreen,
+    private statusBar: StatusBar,
+    private gnl: GlobalNavLocker,
+  ) {
+    tihs.rootPage = HomePage;
+    platform.ready().then(() => {
+      splashScreen.hide();
+      statusBar.styleDefault();
+    });
+  }
+
+  ngOnInit(){
+    this.gnl.setNav(this.nav);
+  }
+
+}
+```
+
+You need to inject GlobalNavLocker in you components constructor. Remember not adding it to `providers` property in component decorator options, because this will create a new instance of the GlobalNavLocker, and will not garantee that all the components in the application are sharing the same navigator handler.
 
 ## How to use?
 
