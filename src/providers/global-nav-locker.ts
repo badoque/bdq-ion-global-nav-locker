@@ -109,6 +109,10 @@ export class GlobalNavLocker {
     this.nav = nav;
   }
 
+  public getNav(): NavController {
+    return this.nav;
+  }
+
   public getPageLock() {
     return this.pageLock;
   }
