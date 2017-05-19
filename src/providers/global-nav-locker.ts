@@ -5,7 +5,7 @@ import { NavController, App, ModalController,
   AlertController, AlertOptions,
   PickerController, PickerOptions,
   ActionSheetController, ActionSheetOptions,
-  LoadingController, LoadingOptions } from "ionic-angular";
+  LoadingController, LoadingOptions, Nav } from "ionic-angular";
 import { BackManagerProvider } from "./back-manager";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/toPromise";
@@ -14,11 +14,17 @@ interface TypeToFunctionNameMapItem {
   [typeKey: string]: string;
 }
 
+interface LocalNavsMap {
+  [typeKey: string]: NavController;
+}
+
 export class QueuedItem {
 
   private typeToFunctionNameMap: TypeToFunctionNameMapItem = {
     "push": "tryPushPage",
+    "pushLocal": "tryLocalPushPage",
     "setRoot": "trySetRootPage",
+    "setRootLocal": "trySetLocalRootPage",
     "modal": "tryPresentModal",
     "popover": "tryPresentPopover",
     "alert": "tryPresentAlert",
@@ -31,7 +37,7 @@ export class QueuedItem {
 
   constructor(
     private globalNavLocker: GlobalNavLocker,
-    public type: "push" | "setRoot" | "modal" | "popover" | "alert" | "actionSheet" | "loading" | "picker", 
+    public type: "push" | "pushLocal" | "setRoot" | "setRootLocal" | "modal" | "popover" | "alert" | "actionSheet" | "loading" | "picker", 
     public args: any[]
   ) {}
 
@@ -56,6 +62,7 @@ export class QueuedItem {
 @Injectable()
 export class GlobalNavLocker {
   private nav: NavController;
+  private localNavs: LocalNavsMap = {};
   private pageLock: boolean = false;
   private queue: QueuedItem[] = [];
 
@@ -107,6 +114,28 @@ export class GlobalNavLocker {
 
   public setNav(nav: any) {
     this.nav = nav;
+  }
+
+  public getNav(): NavController {
+    return this.nav;
+  }
+
+  public addLocalNav(key: string, nav: NavController) {
+    this.localNavs[key] = nav;
+  }
+
+  public removeLocalNav(key: string) {
+    delete this.localNavs[key];
+  }
+
+  public listLocalNavs(): {key: string, value: NavController}[] {
+    let localNavsList:{key: string, value: NavController}[] = [];
+
+    for (let key in this.localNavs) {
+      localNavsList.push({key: key, value: this.localNavs[key]})
+    }
+
+    return localNavsList;
   }
 
   public getPageLock() {
@@ -204,6 +233,50 @@ export class GlobalNavLocker {
     });
   }
 
+
+  public enqueuePushLocalPage(key: string, page: any, params?: any, opts?: NavOptions, done?: Function) {
+    return this.enqueueSomething(new QueuedItem(this, "pushLocal", [key, page, params, opts, done]));
+  }
+
+  public tryLocalPushPage(key: string, page: any, params?: any, opts?: NavOptions, done?: Function) {
+    let self = this;
+    return self.tryLockAndDoSomething((observer: any) => {
+      self.backManager.pushCallback(() => {
+        return Observable.create((backObserver: any) => {
+          self.backManager.popCallback();
+          self.localNavs[key].pop();
+          backObserver.next();
+          backObserver.complete();
+        });
+      });
+
+      let customDone = function() {
+        self.unlock();
+        if (done !== undefined) {
+          return done(arguments);
+        }
+      };
+
+      let promise = self.localNavs[key].push(page, params, opts, customDone);
+
+      if (promise !== undefined) {
+        promise
+          .then(() => {
+            observer.next();
+            observer.complete();
+          })
+          .catch((args) => {
+            self.events.publish("permissionDeniedRedirect");
+            observer.error();
+            observer.complete();
+          });
+      } else {
+        observer.next();
+        observer.complete();
+      }
+    });
+  }
+
   public enqueueSetRootPage(page: any, params?: any, opts?: NavOptions, done?: Function) {
     return this.enqueueSomething(new QueuedItem(this, "setRoot", [page, params, opts, done]));
   }
@@ -221,6 +294,41 @@ export class GlobalNavLocker {
       };
 
       let promise = this.nav.setRoot(page, params, opts, customDone);
+      if (promise !== undefined) {
+        promise
+          .then(() => {
+            observer.next();
+            observer.complete();
+          })
+          .catch(() => {
+            self.events.publish("permissionDeniedRedirect");
+            observer.error();
+            observer.complete();
+          });
+      } else {
+        observer.next();
+        observer.complete();
+      }
+    });
+  }
+
+  public enqueueSetLocalRootPage(key: number, page: any, params?: any, opts?: NavOptions, done?: Function) {
+    return this.enqueueSomething(new QueuedItem(this, "setRootLocal", [key, page, params, opts, done]));
+  }
+
+  public trySetLocalRootPage(key: string, page: any, params?: any, opts?: NavOptions, done?: Function) {
+    let self = this;
+    return self.tryLockAndDoSomething((observer: any) => {
+      this.backManager.setRootCallback();
+
+      let customDone = function() {
+        self.unlock();
+        if (done !== undefined) {
+          return done(arguments);
+        }
+      };
+
+      let promise = this.localNavs[key].setRoot(page, params, opts, customDone);
       if (promise !== undefined) {
         promise
           .then(() => {
